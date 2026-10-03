@@ -35,18 +35,26 @@ jobs:
             /m `
             /verbosity:minimal
 
+      - name: Locate build outputs
+        if: matrix.configuration == 'Release'
+        run: Get-ChildItem -Recurse -Filter "*.exe" | Select-Object -ExpandProperty FullName
+
       - name: Upload UpdateManager-Push artifact
         if: matrix.configuration == 'Release'
         uses: actions/upload-artifact@v4
         with:
           name: UpdateManager-Push-${{ matrix.platform }}
-          path: UpdateManager-Push/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Push.exe
-          if-no-files-found: warn
+          path: |
+            **/${{ matrix.configuration }}/UpdateManager-Push.exe
+            **/${{ matrix.configuration }}/${{ matrix.platform }}/UpdateManager-Push.exe
+          if-no-files-found: error
 
       - name: Upload UpdateManager-Pull artifact
         if: matrix.configuration == 'Release'
         uses: actions/upload-artifact@v4
         with:
           name: UpdateManager-Pull-${{ matrix.platform }}
-          path: UpdateManager-Pull/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Pull.exe
-          if-no-files-found: warn
+          path: |
+            **/${{ matrix.configuration }}/UpdateManager-Pull.exe
+            **/${{ matrix.configuration }}/${{ matrix.platform }}/UpdateManager-Pull.exe
+          if-no-files-found: error
