@@ -39,22 +39,13 @@ jobs:
         if: matrix.configuration == 'Release'
         run: Get-ChildItem -Recurse -Filter "*.exe" | Select-Object -ExpandProperty FullName
 
-      - name: Upload UpdateManager-Push artifact
-        if: matrix.configuration == 'Release'
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: UpdateManager-Push-${{ matrix.platform }}
+          name: UpdateManagers-${{ matrix.configuration }}-${{ matrix.platform }}
           path: |
             **/${{ matrix.configuration }}/UpdateManager-Push.exe
             **/${{ matrix.configuration }}/${{ matrix.platform }}/UpdateManager-Push.exe
-          if-no-files-found: error
-
-      - name: Upload UpdateManager-Pull artifact
-        if: matrix.configuration == 'Release'
-        uses: actions/upload-artifact@v4
-        with:
-          name: UpdateManager-Pull-${{ matrix.platform }}
-          path: |
             **/${{ matrix.configuration }}/UpdateManager-Pull.exe
             **/${{ matrix.configuration }}/${{ matrix.platform }}/UpdateManager-Pull.exe
           if-no-files-found: error
