@@ -37,16 +37,16 @@ UpdateManager-Push.exe
 ### Example
 
 ```
-UpdateManager-Push.exe --artifact-source C:\Build\App.msi --artifact-target /opt/deploy/App.msi --host-ip 10.100.11.25 --host-user admin --host-pass secret
+UpdateManager-Push.exe --artifact-source C:\Build\App.msi --artifact-target C:\Deploy\App.msi --host-ip 10.100.11.25 --host-user admin --host-pass secret
 ```
 
 ### Source Files
 
 | File | Description |
 |---|---|
-| `Deployer/Deployer.cpp` | Entry point; parses command-line arguments |
-| `Deployer/PushManager.h/.cpp` | Orchestrates the upload operation |
-| `Deployer/SFTPUploader.h/.cpp` | SSH connection, authentication, and SFTP file transfer via libssh2 |
+| `UpdateManager-Push/UpdateManager-Push.cpp` | Entry point; parses command-line arguments |
+| `UpdateManager-Push/PushManager.h/.cpp` | Orchestrates the upload operation |
+| `UpdateManager-Push/SFTPUploader.h/.cpp` | SSH connection, authentication, and SFTP file transfer via libssh2 |
 
 ### Dependencies
 
@@ -96,7 +96,8 @@ UpdateManager-Pull.exe --update-url http://builds.internal/App.msi --version-url
 
 | File | Description |
 |---|---|
-| `Updater/PullManager.cpp` | Entry point, `PullManager` class, and all download/install logic |
+| `UpdateManager-Pull/UpdateManager-Pull.cpp` | Entry point; parses command-line arguments |
+| `UpdateManager-Pull/PullManager.h/.cpp` | Download, version check, and install logic |
 
 ### Dependencies
 
