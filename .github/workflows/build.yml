@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: UpdateManager-Push-${{ matrix.platform }}
-          path: Deployer/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Push.exe
+          path: UpdateManager-Push/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Push.exe
           if-no-files-found: warn
 
       - name: Upload UpdateManager-Pull artifact
@@ -48,5 +48,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: UpdateManager-Pull-${{ matrix.platform }}
-          path: Updater/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Pull.exe
+          path: UpdateManager-Pull/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Pull.exe
           if-no-files-found: warn
