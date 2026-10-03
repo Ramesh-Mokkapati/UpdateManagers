@@ -1,0 +1,43 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+x64/
+x86/
+Debug/
+Release/
+UpdateManager-Push/x64/
+UpdateManager-Push/x86/
+UpdateManager-Pull/x64/
+UpdateManager-Pull/x86/
+
+# Intermediate files
+*.obj
+*.pch
+*.pdb
+*.ipdb
+*.iobj
+*.ilk
+*.exp
+*.lib
+*.idb
+*.tlog
+*.lastbuildstate
+*.FileListAbsolute.txt
+*.log
+*.recipe
+
+# Compiled binaries
+*.exe
+*.dll
+
+# NuGet
+packages/
+*.nupkg
+
+# Crash dumps
+*.dmp

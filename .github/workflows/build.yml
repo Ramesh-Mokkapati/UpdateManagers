@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64]
+
+    name: ${{ matrix.configuration }} | ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore UpdateManagers.sln
+
+      - name: Build
+        run: |
+          msbuild UpdateManagers.sln `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:Platform=${{ matrix.platform }} `
+            /m `
+            /verbosity:minimal
+
+      - name: Upload UpdateManager-Push artifact
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: UpdateManager-Push-${{ matrix.platform }}
+          path: Deployer/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Push.exe
+          if-no-files-found: warn
+
+      - name: Upload UpdateManager-Pull artifact
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: UpdateManager-Pull-${{ matrix.platform }}
+          path: Updater/${{ matrix.platform }}/${{ matrix.configuration }}/UpdateManager-Pull.exe
+          if-no-files-found: warn
