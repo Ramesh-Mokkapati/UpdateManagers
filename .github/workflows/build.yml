@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: [ main, master ]
+    tags:     [ "v*.*.*" ]
   pull_request:
     branches: [ main, master ]
 
@@ -49,3 +50,49 @@ jobs:
             **/${{ matrix.configuration }}/UpdateManager-Pull.exe
             **/${{ matrix.configuration }}/${{ matrix.platform }}/UpdateManager-Pull.exe
           if-no-files-found: error
+
+  # On a v*.*.* tag, publish the Release exes as a GitHub Release
+  # (UpdateManagers-<tag>-x64.zip). libssh2 comes from a static NuGet lib
+  # (WinCNG crypto), so the two exes have no extra DLLs to ship.
+  release:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write   # required to create / update a GitHub Release
+
+    steps:
+      - name: Download Release artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: UpdateManagers-Release-x64
+          path: artifact
+
+      # The upload globs keep whatever folders the exes were built into, so find
+      # them by name. if-no-files-found: error only guarantees one of them exists.
+      - name: Stage package
+        run: |
+          mkdir package
+          for f in UpdateManager-Push.exe UpdateManager-Pull.exe; do
+            found=$(find artifact -type f -name "$f")
+            count=$(printf '%s' "$found" | grep -c . || true)
+            if [ "$count" -ne 1 ]; then
+              echo "::error::expected exactly one $f in the Release artifact, found $count"; exit 1
+            fi
+            cp "$found" package/
+          done
+
+      - name: Zip package
+        run: |
+          cd package
+          zip "../UpdateManagers-${{ github.ref_name }}-x64.zip" UpdateManager-Push.exe UpdateManager-Pull.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: UpdateManagers-${{ github.ref_name }}-x64.zip
+          generate_release_notes: true   # auto-generates notes from merged PRs / commits
+          # v1.2.0-rc1 etc. become pre-releases, so they never count as the "latest" release
+          # that downstream packaging (the ComponentSuite installer) picks up.
+          prerelease: ${{ contains(github.ref_name, '-') }}
